@@ -51,3 +51,6 @@ print(prob_sem_mudanca)
 mudanca = prob_com_mudanca - prob_sem_mudanca
 
 print("Mudança de ",round(mudanca*100,2),'%')
+
+
+
