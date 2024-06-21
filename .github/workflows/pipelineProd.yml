@@ -1,0 +1,37 @@
+name: pipelineProd
+on:
+  pull_request:
+    branches: [ "prod" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Run test
+      run: |
+        python -m coverage run -m prova2G.py 
+
+    - name: Relatorio
+      run: |
+         python -m coverage report
+    
+    - name: Docker Build & Push Action
+      uses: mr-smithers-excellent/docker-build-push@v6.4
+      with:
+        image: lucalucareli/prodExDaniel
+        tags: ${{ github.run_number }},latest
+        registry: docker.io
+        dockerfile: dockerfile
+        username: ${{ secrets.DOCKERUSER }}
+        password: ${{ secrets.DOCKERPASSWORD }}
